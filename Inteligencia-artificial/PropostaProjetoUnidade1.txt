@@ -1,0 +1,15 @@
+IA - 2019.1 projeto da primeira unidade
+
+Existe um meio de distribuíção das disciplinas nas salas. A proposta é otimizar isso de maneira que alguns requisitos sejam obedecidos.
+O método de otimização definido pelo grupo foi o Algoritmo Genético.
+
+inicialmente de maneira mais simples, definimos que cada disciplina terá um id, o tamanho e um turno a ser oferecida.
+os requisitos estabelecidos para a melhor distribuição das turmas foram: um horario que esteja dentro do turno que a turma é oferecida e a alocação em uma sala que comporte o tamanho da turma.
+
+para desenvolvimento do algoritmo, definimos 20 disciplinas com id de 0 a 19.
+contendo como tamanho 25 ou 50 alunos (diferenciando apenas em turma grande ou pequena).
+o turno oferecido é Manhã (1), Tarde (4) e Noite (7)
+
+
+aleatoriamente cada turma receberá uma sala de 1 a 10 (inicialmente adotaremos 10 salas) sendo as primeiras 5 salas pequenas e as outras 5 grandes
+e um horario de 1 a 8 - assim  1 (M12), 2 (M34), 3 (M56), 4 (T12), 5 (T34), 6 (T56), 7 (N12) e 8 (N34).

@@ -18,16 +18,16 @@ class Disciplina:
 		lista = []
 		for i in range(quantidade): #supondo inicialemente 20 turmas
 			if i < 5:
-				disc = Disciplina(i, 25, 10) #5 turmas pequenas no turno manha
+				disc = Disciplina(i, 25, 1) #5 turmas pequenas no turno manha
 				lista.append(disc)
 			elif i < 10:
-				disc = Disciplina(i, 25, 20) #5 turmas pequenas no turno da tarde
+				disc = Disciplina(i, 25, 4) #5 turmas pequenas no turno da tarde
 				lista.append(disc)
 			elif i < 15:
-				disc = Disciplina(i, 50, 10) #5 turmas grandes no turno da manha
+				disc = Disciplina(i, 50, 1) #5 turmas grandes no turno da manha
 				lista.append(disc)
 			else:
-				disc = Disciplina(i, 50, 30) #5 turmas grandes pela noite
+				disc = Disciplina(i, 50, 7) #5 turmas grandes pela noite
 				lista.append(disc)
 
 		return lista
@@ -45,7 +45,7 @@ class Cromossomos:
 			for x in self.lista:
 				x.sala = randint(1,10)
 				print(x.sala)
-				x.horario = randint(1,30)
+				x.horario = randint(1,8)
 			populacao.append(Cromossomos(lista))
 			print(populacao[i])
 		return populacao
@@ -53,10 +53,6 @@ class Cromossomos:
 		
 disciplina = Disciplina(None, None, None)
 lista = disciplina.lista_de_disciplinas(20)
-for i in lista:
-	print("Disciplina: ", i.id_disciplina)
-	print("tamanho: ", i.tamanho)
-	print("turno", i.turno)
 cromossomo = Cromossomos(lista)
 pop_inicial = cromossomo.populacao_inicial(8)
 print("id: ", pop_inicial[0].lista[0].id_disciplina)
