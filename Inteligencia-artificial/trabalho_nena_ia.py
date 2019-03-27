@@ -3,6 +3,11 @@ import math
 
 TURMAS_PEQUENAS = 25
 TURMAS_GRANDES = 50
+TURNO = {
+    'M' : 1,
+    'T' : 2,
+    'N' : 3
+}
 HORARIO = {
     'M12': 1,
     'M34': 2,
@@ -27,6 +32,8 @@ class Disciplina(object):
         self.turno = turno
         self.horario = 0
         self.sala = 0
+        self.aptidao_sala = 0
+        self.aptidao_horario = 0
 
     @staticmethod
     def lista_de_disciplinas(quantidade):
@@ -34,34 +41,21 @@ class Disciplina(object):
         for numero in range(quantidade):
             if numero < 5:
                 lista.append(
-                    Disciplina(numero, TURMAS_PEQUENAS, HORARIO['M12']) #5 turmas pequenas no turno manha
+                    Disciplina(numero, TURMAS_PEQUENAS, TURNO['M']) #5 turmas pequenas no turno manha
                 )
             elif numero < 10:
                 lista.append(
-                    Disciplina(numero, TURMAS_PEQUENAS, HORARIO['T12']) #5 turmas pequenas no turno da tarde
+                    Disciplina(numero, TURMAS_PEQUENAS, TURNO['T']) #5 turmas pequenas no turno da tarde
                 )
             elif numero < 15:
                 lista.append(
-                    Disciplina(numero, TURMAS_GRANDES, HORARIO['M12']) #5 turmas grandes no turno da manha
+                    Disciplina(numero, TURMAS_GRANDES, TURNO['M']) #5 turmas grandes no turno da manha
                 )
             else:
                 lista.append(
-                    Disciplina(numero, TURMAS_GRANDES, HORARIO['N12']) #5 turmas grandes pela noite
+                    Disciplina(numero, TURMAS_GRANDES, TURNO['N']) #5 turmas grandes pela noite
                 )
 
-        return lista
-
-    @staticmethod
-    def lista_de_disciplinas_random(quantidade):
-        lista = []
-        for numero in range(quantidade):
-            horarios = list(HORARIO.keys())
-            turmas = [TURMAS_GRANDES, TURMAS_PEQUENAS]
-            turma_aleatoria = choice(turmas)
-            horario_aleatorio = HORARIO[choice(horarios)]
-            lista.append(
-                Disciplina(numero, turma_aleatoria, horario_aleatorio)
-            )
         return lista
 
 
@@ -74,11 +68,51 @@ class Cromossomos(object):
         for numero in range(tamanho_populacao):
             for discplina in self.lista:
                 discplina.sala = randint(1, 10)
-                # print(discplina.sala)
                 discplina.horario = randint(1, 8)
             populacao.append(Cromossomos(lista))
-            # print(populacao[numero])
         return populacao
+
+class AlgoritmoGenetico(object):
+    @staticmethod
+    def aptidao(cromossomo):
+        def aptidao_sala(sala, tamanho):
+            if (sala <= 5 and tamanho <= TURMAS_PEQUENAS) or (sala > 5 and tamanho > TURMAS_PEQUENAS):
+                return 3
+            elif sala > 5 and tamanho <= TURMAS_PEQUENAS:
+                return 2 
+            else:
+                return 1
+
+        def aptidao_horario(turno, horario):
+            if (turno = 1 and 1 <= horario <= 3) or (turno = 2 and 4 <= horario <= 6) or (turno = 3 and 7 <= horario):
+                return 2
+            else:
+                return 1
+
+        for disciplina in cromossomo.lista:
+            disciplina.aptidao_sala = aptidao_sala(disciplina.sala, disciplina.tamanho)
+            disciplina.aptidao_horario = aptidao_horario(disciplina.turno, disciplina.horario)
+
+    @staticmethod
+    def avaliacao(cromossomo):
+        for disciplina in cromossomo:
+            if disciplina.aptidao_sala == 1 or disciplina.aptidao_horario ==1:
+                return False, cromossomo
+        return True, cromossomo
+
+    @staticmethod
+    def selecao(cromossomo):
+        pass
+
+    @staticmethod
+    def cruzamento(cromossomo):
+        pass
+
+    @staticmethod
+    def mutacao(cromossomo):
+        pass
+
+
 
         
 lista = Disciplina.lista_de_disciplinas(QUANTITADE_DISCIPLINA)
