@@ -11,6 +11,7 @@ TURNO = {
 QUANTITADE_DISCIPLINA = 20
 TAMANHO_POPULACAO = 8
 ITERACOES_MAX = 5
+TAXA_MUTACAO = 0.03
 
 class Disciplina(object):
     #O id, tamanho e turno de cada discplina é fixo.
@@ -120,14 +121,17 @@ class AlgoritmoGenetico(object):
                 disciplina_um.aptidao_sala = disciplina_um.aptidao_horario = 0
                 disciplina_dois.aptidao_sala = disciplina_dois.aptidao_horario = 0 
             cromossomos_filhos += [filho_um, filho_dois]
-        import pdb; pdb.set_trace()
         return cromossomos_filhos
 
     @staticmethod
-    def mutacao(cromossomo):
-        pass
-
-
+    def mutacao(cromossomos):
+        # modificar apenas as 3 primeiras disciplinas de 2 cromossomos terao sua sala modificada 
+        teste_probabilidade = random()
+        if teste_probabilidade < TAXA_MUTACAO:
+            for cromossomo in cromossomos[:2]:
+                for disciplina in cromossomo[:3]:
+                    disciplina.sala = randint(1,10)
+        return cromossomos
 
         
 lista = Disciplina.lista_de_disciplinas(QUANTITADE_DISCIPLINA)
@@ -142,48 +146,45 @@ for discplina in pop_amostral.lista:
     print("sala: ", discplina.sala)
     print("*"*50)
 
-for cromossomo in pop_inicial:
-    cromossomo = AlgoritmoGenetico.aptidao(cromossomo)
-    otimo, cromossomo = AlgoritmoGenetico.avaliacao(cromossomo)
-    print(otimo)
-cromossomos_melhores = AlgoritmoGenetico.selecao(pop_inicial)
-cromossomos_filhos = AlgoritmoGenetico.cruzamento(cromossomos_melhores)
+# for cromossomo in pop_inicial:
+#     cromossomo = AlgoritmoGenetico.aptidao(cromossomo)
+#     otimo, cromossomo = AlgoritmoGenetico.avaliacao(cromossomo)
+#     print(otimo)
+# cromossomos_melhores = AlgoritmoGenetico.selecao(pop_inicial)
+# cromossomos_filhos = AlgoritmoGenetico.cruzamento(cromossomos_melhores)
+# cromossomos_filhos_mutados = AlgoritmoGenetico.mutacao(cromossomos_filhos)
 
-# solucionado, resultado = rodar_algoritmo_genetico(pop_inicial, ITERACOES_MAX)
-# if solucionado: # Retorna um cromossomo
-#     print('Cromossomo otimo:')
-#     print(resultado)
-# else: # Retorna uma populacao
-#     print('Iteracoes maximas atingidas: ')
-#     print(resultado)
+def rodar_algoritmo_genetico(populacao, iteracoes, contador=0):
+    print("contador: ", contador)
+    def verificar_otimo(populacao):
+        for cromossomo in populacao:
+            cromossomo = AlgoritmoGenetico.aptidao(cromossomo)
+            otimo, cromossomo = AlgoritmoGenetico.avaliacao(cromossomo)
+            if otimo:
+                return True, cromossomo
+        return False, cromossomo
 
-# def rodar_algoritmo_genetico(populacao, iteracoes, contador=0):
-#     def verificar_otimo(populacao):
-#         for cromossomo in populacao:
-#             cromossomo = aptidao(cromossomo)
-#             otimo, cromossomo = avaliacao(cromossomo)
-#             if otimo:
-#                 return True, cromossomo
-#         return False, cromossomo
+    if iteracoes == contador:
+        print("acabaram as iteracoes")
+        return False, populacao
+    achou_otimo, cromossomo = verificar_otimo(populacao)
+    if achou_otimo:
+        return True, cromossomo
+    populacao_selecionada = AlgoritmoGenetico.selecao(populacao)
+    cromossomos_filhos = AlgoritmoGenetico.cruzamento(populacao_selecionada)
+    cromossomos_filhos_mutados = AlgoritmoGenetico.mutacao(cromossomos_filhos)
+    achou_otimo_filho, cromossomo_filho = verificar_otimo(cromossomos_filhos_mutados)
+    if achou_otimo_filho:
+        return True, cromossomos_filho
+    nova_populacao = populacao_selecionada + cromossomos_filhos_mutados
+    import pdb; pdb.set_trace()
+    return rodar_algoritmo_genetico(nova_populacao, iteracoes, contador+1)
 
-#     if iteracoes == contador:
-#         return False, populacao
-#     achou_otimo, cromossomo = verificar_otimo(populacao)
-#     if achou_otimo:
-#         return True, cromossomo
-#     populacao_selecionada = selecao(populacao)
-#     cromossomos_filhos = cruzamento(populacao_selecionada)
-#     filhos_adolescentes = mutacao(cromossomos_filhos)
-#     achou_otimo_filho, cromossomo_filho = verificar_otimo(filhos_adolescentes)
-#     if achou_otimo_filho:
-#         return True, cromossomos_filho
-#     nova_populacao = populacao_selecionada + filhos_adolescentes
-#     rodar_tudo(nova_populacao, iteracoes, contador+1)
-
-# solucionado, resultado = rodar_algoritmo_genetico(pop_inicial, ITERACOES_MAX)
-# if solucionado: # Retorna um cromossomo
-#     print('Cromossomo otimo:')
-#     print(resultado)
-# else: # Retorna uma populacao
-#     print('Iteracoes maximas atingidas: ')
-#     print(resultado)
+solucionado, resultado = rodar_algoritmo_genetico(pop_inicial, ITERACOES_MAX)
+print("solucao: ", solucionado)
+if solucionado: # Retorna um cromossomo
+    print('Cromossomo otimo:')
+    print(resultado)
+else: # Retorna uma populacao
+    print('Iteracoes maximas atingidas: ')
+    print(resultado)
