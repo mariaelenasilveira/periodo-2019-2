@@ -10,7 +10,7 @@ TURNO = {
 }
 QUANTITADE_DISCIPLINA = 20
 TAMANHO_POPULACAO = 8
-ITERACOES_MAX = 5
+ITERACOES_MAX = 10
 TAXA_MUTACAO = 0.03
 
 class Disciplina(object):
@@ -137,25 +137,9 @@ class AlgoritmoGenetico(object):
 lista = Disciplina.lista_de_disciplinas(QUANTITADE_DISCIPLINA)
 cromossomos = Cromossomos(lista)
 pop_inicial = cromossomos.populacao_inicial(TAMANHO_POPULACAO)
-pop_amostral = pop_inicial[0]
-for discplina in pop_amostral.lista:
-    print("id: ", discplina.id_disciplina)
-    print("tamanho: ", discplina.tamanho)
-    print("turno: ", discplina.turno)
-    print("horario: ", discplina.horario)
-    print("sala: ", discplina.sala)
-    print("*"*50)
 
-# for cromossomo in pop_inicial:
-#     cromossomo = AlgoritmoGenetico.aptidao(cromossomo)
-#     otimo, cromossomo = AlgoritmoGenetico.avaliacao(cromossomo)
-#     print(otimo)
-# cromossomos_melhores = AlgoritmoGenetico.selecao(pop_inicial)
-# cromossomos_filhos = AlgoritmoGenetico.cruzamento(cromossomos_melhores)
-# cromossomos_filhos_mutados = AlgoritmoGenetico.mutacao(cromossomos_filhos)
 
 def rodar_algoritmo_genetico(populacao, iteracoes, contador=0):
-    print("contador: ", contador)
     def verificar_otimo(populacao):
         for cromossomo in populacao:
             cromossomo = AlgoritmoGenetico.aptidao(cromossomo)
@@ -165,7 +149,6 @@ def rodar_algoritmo_genetico(populacao, iteracoes, contador=0):
         return False, cromossomo
 
     if iteracoes == contador:
-        print("acabaram as iteracoes")
         return False, populacao
     achou_otimo, cromossomo = verificar_otimo(populacao)
     if achou_otimo:
@@ -177,14 +160,32 @@ def rodar_algoritmo_genetico(populacao, iteracoes, contador=0):
     if achou_otimo_filho:
         return True, cromossomos_filho
     nova_populacao = populacao_selecionada + cromossomos_filhos_mutados
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     return rodar_algoritmo_genetico(nova_populacao, iteracoes, contador+1)
 
+# Ao terminar a quantidade de iteracoes será retornado a população da ultima iteração. 
+# Avalia o melhor cromossomo da última população.
+def avaliacao_final(populacao):
+    def torneio(cromossomo):
+        soma = 0
+        for disciplina in cromossomo.lista:
+            soma += disciplina.aptidao_horario*disciplina.aptidao_sala
+        return soma
+
+    melhor_cromossomo_final = max(populacao, key=torneio)
+    return melhor_cromossomo_final
+
 solucionado, resultado = rodar_algoritmo_genetico(pop_inicial, ITERACOES_MAX)
-print("solucao: ", solucionado)
 if solucionado: # Retorna um cromossomo
     print('Cromossomo otimo:')
     print(resultado)
 else: # Retorna uma populacao
+    melhor_cromossomo_final = avaliacao_final(resultado)
     print('Iteracoes maximas atingidas: ')
-    print(resultado)
+    for discplina in melhor_cromossomo_final.lista:
+        print("id: ", discplina.id_disciplina)
+        print("tamanho: ", discplina.tamanho)
+        print("turno: ", discplina.turno)
+        print("horario: ", discplina.horario)
+        print("sala: ", discplina.sala)
+        print("*"*50)
