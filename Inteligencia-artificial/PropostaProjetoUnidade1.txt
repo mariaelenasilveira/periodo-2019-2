@@ -8,7 +8,7 @@ os requisitos estabelecidos para a melhor distribuição das turmas foram: um ho
 
 para desenvolvimento do algoritmo, definimos 20 disciplinas com id de 0 a 19.
 contendo como tamanho 25 ou 50 alunos (diferenciando apenas em turma grande ou pequena).
-o turno oferecido é Manhã (1), Tarde (4) e Noite (7)
+o turno oferecido é Manhã (0), Tarde (1) e Noite (2)
 
 
 aleatoriamente cada turma receberá uma sala de 1 a 10 (inicialmente adotaremos 10 salas) sendo as primeiras 5 salas pequenas e as outras 5 grandes
