@@ -1,5 +1,6 @@
 from random import random, uniform, randint, randrange, choice
 import math
+import csv
 
 TURMAS_PEQUENAS = 25
 TURMAS_GRANDES = 50
@@ -129,7 +130,7 @@ class AlgoritmoGenetico(object):
         teste_probabilidade = random()
         if teste_probabilidade < TAXA_MUTACAO:
             for cromossomo in cromossomos[:2]:
-                for disciplina in cromossomo[:3]:
+                for disciplina in cromossomo.lista[:3]:
                     disciplina.sala = randint(1,10)
         return cromossomos
 
@@ -176,16 +177,44 @@ def avaliacao_final(populacao):
     return melhor_cromossomo_final
 
 solucionado, resultado = rodar_algoritmo_genetico(pop_inicial, ITERACOES_MAX)
+melhor_cromossomo_final = avaliacao_final(resultado)
+horario_aula = []
+turno_aula = []
 if solucionado: # Retorna um cromossomo
     print('Cromossomo otimo:')
-    print(resultado)
+    # print(resultado)
+    melhor_cromossomo_final = resultado
 else: # Retorna uma populacao
     melhor_cromossomo_final = avaliacao_final(resultado)
-    print('Iteracoes maximas atingidas: ')
-    for discplina in melhor_cromossomo_final.lista:
-        print("id: ", discplina.id_disciplina)
-        print("tamanho: ", discplina.tamanho)
-        print("turno: ", discplina.turno)
-        print("horario: ", discplina.horario)
-        print("sala: ", discplina.sala)
-        print("*"*50)
+    print('QUANTIDADE DE ITERAÇÕES MÁXIMA ATINGIDA! ')
+    for disciplina in melhor_cromossomo_final.lista:
+    	switcher = {
+    		1: "M12",
+    		2: "M34",
+    		3: "M56",
+    		4: "T12",
+    		5: "T34",
+    		6: "T56",
+    		7: "N12",
+    		8: "N34",
+    	}
+    	horario_aula.append(switcher.get(disciplina.horario, "nothing"))
+    	switcher = {
+    		1: "Manhã",
+    		2: "Tarde",
+    		3: "Noite",    		
+    	}
+    	turno_aula.append(switcher.get(disciplina.turno, "nothing"))
+
+print("*"*50)
+print("Resultado final para distribuição das salas: ")    	
+file = open('tabela.csv', 'w')
+try:
+    writer = csv.writer(file)
+    writer.writerow(("ID_DISCIPLINA", "TAMANHO DA TURMA", "TURNO", "HORÁRIO DE AULA", "SALA"))
+    for disciplina, horario_aula_n, turno_aula_n in zip(melhor_cromossomo_final.lista, horario_aula, turno_aula):
+        writer.writerow((disciplina.id_disciplina, disciplina.tamanho, turno_aula_n, horario_aula_n, disciplina.sala))
+finally:
+    file.close()
+
+print(open('tabela.csv', 'rt').read())
